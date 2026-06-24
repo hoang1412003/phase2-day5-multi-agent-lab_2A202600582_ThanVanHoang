@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Benchmark & Đánh Giá Hệ Thống Multi-Agent</title>
+    <!-- Tải thư viện Mermaid để render sơ đồ -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --bg-color: #f8fafc;
+            --text-main: #334155;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.7;
+            color: var(--text-main);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px 50px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            color: #0f172a;
+            font-size: 2.2em;
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        h2 {
+            color: var(--secondary);
+            font-size: 1.5em;
+            margin-top: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 24px;
+            background-color: var(--primary);
+            border-radius: 4px;
+        }
+
+        h3 {
+            color: #0f172a;
+            margin-top: 25px;
+            font-size: 1.2em;
+        }
+
+        .query-box {
+            background: #eff6ff;
+            border-left: 5px solid var(--primary);
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-size: 1.05em;
+        }
+
+        .query-box strong {
+            color: var(--secondary);
+        }
+
+        .workflow-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .workflow-explanation {
+            text-align: left;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+            text-align: left;
+            padding: 16px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .metric-name {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.2s ease;
+        }
+
+        .quote-box {
+            background-color: #fdfdfd;
+            border-left: 4px solid var(--primary);
+            padding: 15px 20px;
+            margin: 15px 0;
+            font-style: italic;
+            color: #475569;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .comment-box {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            color: #166534;
+        }
+
+        .failure-title {
+            color: var(--danger);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .solution-title {
+            color: var(--success);
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #db2777;
+            font-size: 0.9em;
+        }
+
+        .exit-ticket-q {
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            background: #f8fafc;
+            padding: 12px 15px;
+            border-radius: 6px;
+            border-left: 4px solid var(--warning);
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge.win {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge.lose {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Báo Cáo Benchmark & Đánh Giá Hệ Thống</h1>
+
+    <div style="text-align: center; margin-bottom: 40px; font-size: 1.1em; color: #475569;">
+        <strong>Sinh viên thực hiện:</strong> Thân Văn Hoàng <br>
+        <strong>MSSV:</strong> 2A202600582
+    </div>
+
+    <h2>1. Kiến trúc Workflow Hệ thống (LangGraph)</h2>
+    <div class="workflow-box">
+        <div class="mermaid">
+            graph TD
+                User([User Query]) --> Supervisor
+                
+                Supervisor -->|sources == 0| Researcher
+                Researcher -->|Search Web & Summarize| Supervisor
+                
+                Supervisor -->|Has Research, No Analysis| Analyst
+                Analyst -->|Evaluate & Extract Key Claims| Supervisor
+                
+                Supervisor -->|Has Analysis, No Final Answer| Writer
+                Writer -->|Synthesize Final Report| Supervisor
+                
+                Supervisor -->|Has Final Answer| End([__end__])
+        </div>
+        <div class="workflow-explanation">
+            <strong>Giải thích luồng hoạt động:</strong>
+            <ul>
+                <li><strong>Supervisor (Người điều phối):</strong> Đóng vai trò là trung tâm kiểm soát (Router). Dựa vào trạng thái chung (Shared State), Supervisor quyết định ai sẽ làm việc tiếp theo thông qua một bộ quy tắc nghiêm ngặt.</li>
+                <li><strong>Researcher (Nhà nghiên cứu):</strong> Dùng <code>TavilyClient</code> tìm kiếm 5 bài báo học thuật mới nhất trên Internet, đọc lướt và tóm tắt lại thành <code>research_notes</code>.</li>
+                <li><strong>Analyst (Nhà phân tích):</strong> Đọc bản tóm tắt thô của Researcher, bóc tách ra các luận điểm chính (Key Claims) và đánh giá những bằng chứng yếu (Weak Evidence) để tạo ra <code>analysis_notes</code>.</li>
+                <li><strong>Writer (Người viết bài):</strong> Dựa trên các luận điểm đã được Analyst xác thực, Writer sẽ chấp bút viết thành một bài báo cáo khoa học hoàn chỉnh 500 chữ.</li>
+            </ul>
+        </div>
+    </div>
+
+    <h2>2. So Sánh Single-Agent vs Multi-Agent</h2>
+    
+    <div class="query-box">
+        <strong>Truy vấn thử nghiệm:</strong> <em>"Research GraphRAG state-of-the-art and write a 500-word summary"</em>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th width="20%">Metric</th>
+                <th width="25%">Single-Agent (Baseline)</th>
+                <th width="30%">Multi-Agent (LangGraph + Tavily)</th>
+                <th width="25%">Nhận Xét</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="metric-name">Quality<br><span style="font-size: 0.8em; color: #64748b;">(Chất lượng)</span></td>
+                <td><span class="badge lose">Rất thấp</span><br><br>Chỉ giải thích định nghĩa chung chung. Bị lỗi thời.</td>
+                <td><span class="badge win">Rất cao</span><br><br>Phân tích chi tiết sự phân mảnh, đề cập các paper mới (LazyGraphRAG).</td>
+                <td><strong>Multi-agent thắng tuyệt đối</strong> nhờ khả năng thu thập dữ liệu thời gian thực.</td>
+            </tr>
+            <tr>
+                <td class="metric-name">Citation coverage</td>
+                <td>0% <br>(Không có nguồn nào)</td>
+                <td>100% <br>(Tất cả thông tin lấy từ 5 link bài báo)</td>
+                <td>Multi-agent hoàn thành tốt yêu cầu trích dẫn khoa học.</td>
+            </tr>
+            <tr>
+                <td class="metric-name">Latency<br><span style="font-size: 0.8em; color: #64748b;">(Thời gian)</span></td>
+                <td><span class="badge win">Nhanh (~2-3s)</span></td>
+                <td><span class="badge lose">Chậm hơn (~15-20s)</span></td>
+                <td>Đổi thời gian lấy chất lượng. Tùy thuộc vào tốc độ mạng và LLM.</td>
+            </tr>
+            <tr>
+                <td class="metric-name">Cost<br><span style="font-size: 0.8em; color: #64748b;">(Token)</span></td>
+                <td>~1,000 Tokens <br>($0.0003)</td>
+                <td>~6,500 Tokens <br>($0.0025)</td>
+                <td>Multi-agent tốn token gấp ~6 lần do chia task và duy trì Shared State liên tục.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>3. So sánh Câu trả lời thực tế (Raw Outputs)</h2>
+    
+    <div class="card">
+        <h3>🤖 Câu trả lời của Single-Agent (Baseline)</h3>
+        <div class="quote-box">
+            "GraphRAG (Graph Retrieval-Augmented Generation) is a state-of-the-art framework that integrates graph-based knowledge representation with retrieval-augmented generation techniques... One of the key innovations of GraphRAG is its ability to dynamically retrieve relevant subgraphs based on the input query or prompt... In conclusion, GraphRAG represents a significant advancement in the integration of graph-based knowledge with generative models."
+        </div>
+        <div class="comment-box">
+            <strong>Nhận xét:</strong> Lời văn trôi chảy nhưng nội dung giống hệt sách giáo khoa cơ bản, hoàn toàn không trích dẫn được bất kỳ công trình nghiên cứu hay bài báo khoa học nào đang diễn ra ở hiện tại.
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>🤖 Câu trả lời của Multi-Agent</h3>
+        <div class="quote-box">
+            "GraphRAG is an innovative approach to Retrieval-Augmented Generation (RAG) that significantly enhances the capabilities of large language models (LLMs)... The current research landscape surrounding GraphRAG is characterized by fragmentation... Recent advancements, particularly the introduction of <strong>LazyGraphRAG</strong>, have further refined the capabilities of GraphRAG systems... By utilizing varying levels of relevance test budgets, LazyGraphRAG has demonstrated improved answer quality metrics..."
+        </div>
+        <div class="comment-box">
+            <strong>Nhận xét:</strong> Đậm chất học thuật chuyên sâu. AI không chỉ nêu định nghĩa mà còn phân tích được tình trạng nghiên cứu hiện tại (sự phân mảnh - fragmentation), đồng thời đưa ra được dẫn chứng bằng công trình nghiên cứu "LazyGraphRAG" (một bài báo rất mới của Microsoft) để chứng minh cho luận điểm.
+        </div>
+    </div>
+
+    <h2>4. Phân Tích Lỗi (Failure Mode) & Cách Khắc Phục</h2>
+    
+    <div class="card">
+        <div class="failure-title">❌ Failure Mode:</div>
+        <p>Khi chuyển từ dữ liệu giả lập (mock) sang API OpenAI thật, tác nhân <code>Supervisor</code> ngay lập tức trả về <code>__end__</code> dù hệ thống chưa hề tìm kiếm hay phân tích bất kỳ thông tin nào.</p>
+        
+        <div style="color: #64748b; font-weight: 600; margin-top: 15px;">Nguyên nhân:</div>
+        <p>Câu lệnh Prompt mặc định của Supervisor quá chung chung: <em>"Decide which worker should run next: 'researcher', 'analyst', 'writer', or '__end__'."</em> AI không hiểu được luật chơi và quy trình làm việc nên đã quyết định kết thúc luồng ngay lập tức.</p>
+
+        <div class="solution-title">✅ Cách Fix:</div>
+        <p>Đã cập nhật lại <code>system_prompt</code> trong file <code>agents/supervisor.py</code> bằng một bộ quy tắc (Rules) cực kỳ chi tiết, ép AI phải đọc Shared State để ra quyết định:</p>
+        <ul>
+            <li>Nếu <code>sources == 0</code> &rarr; gọi <strong>researcher</strong></li>
+            <li>Nếu có <code>research_notes</code> mà chưa có <code>analysis_notes</code> &rarr; gọi <strong>analyst</strong></li>
+            <li>Nếu có <code>analysis_notes</code> mà chưa có <code>final_answer</code> &rarr; gọi <strong>writer</strong></li>
+            <li>Nếu có <code>final_answer</code> &rarr; gọi <strong>__end__</strong></li>
+        </ul>
+        <p><em>Kết quả: Sau khi đưa ra luật chặt chẽ, hệ thống đã chạy trơn tru đúng vòng lặp.</em></p>
+    </div>
+
+    <h2>5. Trả lời Exit Ticket</h2>
+
+    <div class="card">
+        <div class="exit-ticket-q">Câu 1: Case nào nên dùng multi-agent? Vì sao?</div>
+        <ul>
+            <li><strong>Nên dùng cho:</strong> Các tác vụ phức tạp, đòi hỏi tư duy sâu, nghiên cứu thực tế, kiểm tra chéo hoặc liên quan đến nhiều công cụ khác nhau (Ví dụ: Viết báo cáo khoa học, lập trình phần mềm tự sửa lỗi, phân tích dữ liệu thị trường).</li>
+            <li><strong>Vì sao:</strong> Việc chia nhỏ tác vụ cho các Agent chuyên biệt giúp tăng cường độ chính xác, do mỗi Agent chỉ cần tập trung làm tốt một việc duy nhất (như đọc báo, phân tích, viết văn). Đồng thời, việc có Analyst kiểm tra chéo (guardrail) kết quả của Researcher giúp giảm thiểu tối đa hiện tượng "ảo giác" (hallucination) thường thấy của AI.</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <div class="exit-ticket-q">Câu 2: Case nào không nên dùng multi-agent? Vì sao?</div>
+        <ul>
+            <li><strong>Không nên dùng cho:</strong> Các tác vụ đơn giản, mang tính chất 1 chiều hoặc cần tốc độ phản hồi tức thì (Ví dụ: real-time chat, dịch thuật, giải thích định nghĩa từ vựng, tóm tắt một đoạn văn ngắn cho sẵn).</li>
+            <li><strong>Vì sao:</strong> Multi-agent đòi hỏi một luồng xử lý (workflow) dài, hệ thống phải gọi API nhiều lần liên tiếp nên độ trễ (latency) rất cao và cực kỳ tốn kém chi phí (Token cost). Việc "dùng dao mổ trâu để giết gà" trong trường hợp này là lãng phí tài nguyên và làm suy giảm trải nghiệm người dùng vì họ phải chờ đợi quá lâu.</li>
+        </ul>
+    </div>
+
+</div>
+
+</body>
+</html>

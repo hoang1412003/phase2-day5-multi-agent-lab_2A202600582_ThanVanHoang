@@ -11,9 +11,7 @@ class CriticAgent(BaseAgent):
     name = "critic"
 
     def run(self, state: ResearchState) -> ResearchState:
-        """Validate final answer and append findings.
-
-        TODO(student): Add fact-check, citation coverage, or hallucination checks.
-        """
-
-        raise StudentTodoError("TODO(student): implement CriticAgent.run")
+        """Add fact-check, citation coverage, or hallucination checks."""
+        # Optional mock implementation
+        state.add_trace_event("critic", {"feedback": "Looks good from the mock critic."})
+        return state

@@ -6,6 +6,9 @@ import typer
 from rich.console import Console
 from rich.panel import Panel
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from multi_agent_research_lab.core.config import get_settings
 from multi_agent_research_lab.core.errors import StudentTodoError
 from multi_agent_research_lab.core.schemas import ResearchQuery
@@ -31,10 +34,15 @@ def baseline(
     _init()
     request = ResearchQuery(query=query)
     state = ResearchState(request=request)
-    state.final_answer = (
-        "Baseline skeleton response. TODO(student): replace this with a real single-agent "
-        "implementation and record latency/cost/quality metrics."
-    )
+    
+    from multi_agent_research_lab.services.llm_client import LLMClient
+    llm = LLMClient()
+    system_prompt = "You are a single-agent research assistant. Answer the user's query directly."
+    response = llm.complete(system_prompt=system_prompt, user_prompt=query)
+    
+    state.final_answer = response.content
+    state.add_trace_event("baseline_call", {"cost": response.cost_usd, "tokens": response.output_tokens})
+    
     console.print(Panel.fit(state.final_answer, title="Single-Agent Baseline"))
 
 
